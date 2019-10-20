@@ -1,0 +1,7 @@
+serwerownia    temperatura
+-----------    -----------
+CA             25.9
+Celina         17.9
+TSM            26.0
+Zefir          23.9
+
