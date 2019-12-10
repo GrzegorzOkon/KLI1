@@ -16,14 +16,14 @@ my $OID_temperature = '1.3.6.1.4.1.22925.489.3.1.4.1.1';
 my $address = 0;
 my $result = 0;
 
-if (not defined $console) {
-   open (ETYKIETA_TEMPERATURY, ">KLI1.txt") || die "nie moge utworzyc pliku";
-   open (ETYKIETA_TEMPERATURY, ">>KLI1.txt") || die "nie moge zapisac do pliku";
-} else {
-   open (ETYKIETA_TEMPERATURY, ">&STDOUT") || die "nie moge utworzyc polaczenia do konsoli";
-}
+open (ETYKIETA_TEMPERATURY, ">KLI1.txt") || die "nie moge utworzyc pliku";
+open (ETYKIETA_TEMPERATURY, ">>KLI1.txt") || die "nie moge zapisac do pliku";
+print_header();
 
-print ETYKIETA_TEMPERATURY "serwerownia    temperatura\n-----------    -----------\n";
+if (defined $console) {
+   open (ETYKIETA_TEMPERATURY, ">&STDOUT") || die "nie moge utworzyc polaczenia do konsoli";
+   print_header();
+}
 
 foreach $address (@addresses) {
    my ($session, $error) = Net::SNMP->session(
@@ -42,9 +42,20 @@ foreach $address (@addresses) {
       exit 1;
    }
 
+   open (ETYKIETA_TEMPERATURY, ">>KLI1.txt") || die "nie moge zapisac do pliku";
    write (ETYKIETA_TEMPERATURY);
 
+   if (defined $console) {
+      open (ETYKIETA_TEMPERATURY, ">&STDOUT") || die "nie moge utworzyc polaczenia do konsoli";
+      write (ETYKIETA_TEMPERATURY);
+   }
+
    $session->close();
+}
+
+sub print_header {
+   print ETYKIETA_TEMPERATURY "serwerownia    temperatura\n-----------    -----------\n";
+   return;
 }
 
 format ETYKIETA_TEMPERATURY =
